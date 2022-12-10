@@ -19,7 +19,6 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.food_object_detector.ml.FoodDetect;
 import com.example.food_object_detector.ml.Model;
 
 import org.tensorflow.lite.DataType;
