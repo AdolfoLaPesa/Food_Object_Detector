@@ -17,12 +17,16 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.food_object_detector.ml.DetectObject;
 import com.example.food_object_detector.ml.Model;
 
 import org.tensorflow.lite.DataType;
+import org.tensorflow.lite.support.image.TensorImage;
 import org.tensorflow.lite.support.tensorbuffer.TensorBuffer;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
@@ -31,7 +35,10 @@ public class ObjectDetectorActivity extends AppCompatActivity {
     private Button buttonPhoto;
     private ImageView imageView;
     private TextView textView;
-    private int imageSize = 300;
+    private int imageSize = 224;
+    private Bitmap image;
+    private String[] labels;
+    private int count = 0;
 
 
     @Override
@@ -42,6 +49,21 @@ public class ObjectDetectorActivity extends AppCompatActivity {
         buttonPhoto = findViewById(R.id.button_take_object_photo);
         imageView = findViewById(R.id.imageView);
         textView = findViewById(R.id.text_view_object_classified);
+
+        try {
+            labels = new String[1001];
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(getAssets().open("object_list.txt")));
+            String line = bufferedReader.readLine();
+            while(line != null){
+                labels[count] = line;
+                count++;
+                line = bufferedReader.readLine();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
 
         buttonPhoto.setOnClickListener(new View.OnClickListener() {
             @RequiresApi(api = Build.VERSION_CODES.M)
@@ -63,13 +85,13 @@ public class ObjectDetectorActivity extends AppCompatActivity {
 
         if(resultCode == RESULT_OK){
             if(requestCode == 3){
-                Bitmap image = (Bitmap) data.getExtras().get("data");
+                image = (Bitmap) data.getExtras().get("data");
                 int dimension = Math.min(image.getWidth(), image.getHeight());
                 image = ThumbnailUtils.extractThumbnail(image, dimension, dimension);
                 imageView.setImageBitmap(image);
 
                 image = Bitmap.createScaledBitmap(image, imageSize, imageSize, false);
-                classifyImage(image);
+                classifyImage();
             }
 
             /* Funzinoe per integrare l'assunzione di un immagine dalla galleria
@@ -97,55 +119,36 @@ public class ObjectDetectorActivity extends AppCompatActivity {
 
     }
 
+    public void classifyImage(){
 
-    public void classifyImage(Bitmap image){
         try {
-            Model model = Model.newInstance(getApplicationContext());
+            DetectObject model = DetectObject.newInstance(ObjectDetectorActivity.this);
             // Creates inputs for reference.
-            TensorBuffer inputFeature0 = TensorBuffer.createFixedSize(new int[]{1, 300, 300, 3}, DataType.FLOAT32);
-            ByteBuffer byteBuffer = ByteBuffer.allocateDirect(4 * imageSize * imageSize * 3);
-            byteBuffer.order(ByteOrder.nativeOrder());
-
-            int[] intValues = new int[imageSize * imageSize];
-            image.getPixels(intValues, 0, image.getWidth(), 0, 0 , image.getWidth(), image.getHeight());
-            int pixel = 0;
-            for(int i  = 0; i < imageSize; i++){
-                for(int j = 0; j < imageSize; j++){
-                    int val = intValues[pixel++]; //RGB
-                    byteBuffer.putFloat(((val >> 16) & 0xFF) * (1.f / 1)); //eventualmente provare a sostituire l'1 con 255
-                    byteBuffer.putFloat(((val >> 8) & 0xFF) * (1.f / 1));
-                    byteBuffer.putFloat((val & 0xFF) * (1.f / 1));
-
-                }
-            }
-
-            inputFeature0.loadBuffer(byteBuffer);
+            TensorBuffer inputFeature0 = TensorBuffer.createFixedSize(new int[]{1, 224, 224, 3}, DataType.UINT8);
+            inputFeature0.loadBuffer(TensorImage.fromBitmap(image).getBuffer());
 
             // Runs model inference and gets result.
-            Model.Outputs outputs = model.process(inputFeature0);
+            DetectObject.Outputs outputs = model.process(inputFeature0);
             TensorBuffer outputFeature0 = outputs.getOutputFeature0AsTensorBuffer();
 
+            textView.setText(labels[getMax(outputFeature0.getFloatArray())] +  " ");
 
 
-            float[] confidences = outputFeature0.getFloatArray();
-            // find the index of the class with the biggest confidence.
-            int maxPos = 0;
-            float maxConfidence = 0;
-            for (int i = 0; i < confidences.length; i++) {
-                if (confidences[i] > maxConfidence) {
-                    maxConfidence = confidences[i];
-                    maxPos = i;
-                }
-            }
-            String[] classes = {"laptop", "fork", "mouse", "microwave", "bottle", "chair","bed", "toilet", "tv"};
-            textView.setText(classes[maxPos]);
 
             // Releases model resources if no longer used.
             model.close();
         } catch (IOException e) {
             // TODO Handle the exception
         }
+
+
     }
 
-
+    public int getMax(float[] array ){
+        int max = 0;
+        for(int i = 0; i < array.length; i++){
+            if(array[i] > array[max]) max = i;
+        }
+        return max;
+    }
 }
