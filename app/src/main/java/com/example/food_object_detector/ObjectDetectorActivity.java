@@ -12,13 +12,16 @@ import android.media.ThumbnailUtils;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.food_object_detector.ml.DetectObject;
-import com.example.food_object_detector.ml.Model;
 
 import org.tensorflow.lite.DataType;
 import org.tensorflow.lite.support.image.TensorImage;
@@ -27,8 +30,6 @@ import org.tensorflow.lite.support.tensorbuffer.TensorBuffer;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 
 public class ObjectDetectorActivity extends AppCompatActivity {
 
@@ -40,6 +41,11 @@ public class ObjectDetectorActivity extends AppCompatActivity {
     private String[] labels;
     private int count = 0;
 
+    private String[] languages = {"Italiano","Russo", "Tedesco", "Spagnolo", "Giapponese"};
+    private AutoCompleteTextView autoComlete;
+    private ArrayAdapter arrayAdapter;
+
+    private String selectedLenguage = "Inglese";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,18 +56,10 @@ public class ObjectDetectorActivity extends AppCompatActivity {
         imageView = findViewById(R.id.imageView);
         textView = findViewById(R.id.text_view_object_classified);
 
-        try {
-            labels = new String[1001];
-            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(getAssets().open("object_list.txt")));
-            String line = bufferedReader.readLine();
-            while(line != null){
-                labels[count] = line;
-                count++;
-                line = bufferedReader.readLine();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        autoComlete = findViewById(R.id.auto_complete_txt);
+        arrayAdapter = new ArrayAdapter<String>(this, R.layout.list_language, languages);
+        autoComlete.setAdapter(arrayAdapter);
+
 
 
 
@@ -72,9 +70,19 @@ public class ObjectDetectorActivity extends AppCompatActivity {
                 if(checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
                     Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                     startActivityForResult(cameraIntent, 3);
+
                 }else{
                     requestPermissions(new String[]{Manifest.permission.CAMERA}, 100);
                 }
+            }
+        });
+
+
+        autoComlete.setOnItemClickListener(new AdapterView.OnItemClickListener(){
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                selectedLenguage = autoComlete.getText().toString();
+               System.out.println("hai scelto: " + selectedLenguage);
             }
         });
 
@@ -83,6 +91,8 @@ public class ObjectDetectorActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
 
+
+
         if(resultCode == RESULT_OK){
             if(requestCode == 3){
                 image = (Bitmap) data.getExtras().get("data");
@@ -90,8 +100,23 @@ public class ObjectDetectorActivity extends AppCompatActivity {
                 image = ThumbnailUtils.extractThumbnail(image, dimension, dimension);
                 imageView.setImageBitmap(image);
 
+                labels = new String[1001];
+                switch (selectedLenguage){
+                    case "Inglese":
+                        objectDetectorControl("object_list.txt");
+                        break;
+                    case "Italiano":
+                        objectDetectorControl("object_list_ita.txt");
+                        break;
+                    case "Russo":
+                        objectDetectorControl("object_list_ru.txt");
+                        break;
+                    default:
+                        selectedLenguage = "object_list.txt";
+                }
                 image = Bitmap.createScaledBitmap(image, imageSize, imageSize, false);
                 classifyImage();
+
             }
 
             /* Funzinoe per integrare l'assunzione di un immagine dalla galleria
@@ -133,8 +158,6 @@ public class ObjectDetectorActivity extends AppCompatActivity {
 
             textView.setText(labels[getMax(outputFeature0.getFloatArray())] +  " ");
 
-
-
             // Releases model resources if no longer used.
             model.close();
         } catch (IOException e) {
@@ -151,4 +174,24 @@ public class ObjectDetectorActivity extends AppCompatActivity {
         }
         return max;
     }
+
+    public void objectDetectorControl(String string){
+        try {
+            count=0;
+            labels = new String[1001];
+            System.out.println("nome della stringa: " + string);
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(getAssets().open(string)));
+            String line = bufferedReader.readLine();
+            while(line != null){
+                labels[count] = line;
+                count++;
+                line = bufferedReader.readLine();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+
 }

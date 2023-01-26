@@ -10,11 +10,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_centerInParent="true"
+        android:layout_centerVertical="true"
+        android:layout_marginBottom="1dp"
         android:text="Take Photo"
         android:textAllCaps="false"
         android:textSize="21sp"
         android:textStyle="bold" />
+
     <ImageView
         android:layout_width="370sp"
         android:layout_height="370sp"
@@ -33,16 +35,38 @@
         android:text="Classified as:"
         android:textSize="20sp"
         android:textStyle="bold" />
+
     <TextView
+        android:id="@+id/result"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/text_view_object_classified"
+        android:layout_alignParentStart="true"
         android:layout_centerHorizontal="true"
+        android:layout_marginStart="205dp"
+        android:layout_marginTop="23dp"
         android:text=""
         android:textColor="#C30000"
-        android:textStyle="bold"
         android:textSize="27sp"
-        android:id="@+id/result"
-        android:layout_below="@+id/text_view_object_classified"
-        />
+        android:textStyle="bold" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/dropLayout"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/result"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="25dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:hint="Seleziona">
+
+        <AutoCompleteTextView
+            android:id="@+id/auto_complete_txt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="none" />
+    </com.google.android.material.textfield.TextInputLayout>
 
 </RelativeLayout>
