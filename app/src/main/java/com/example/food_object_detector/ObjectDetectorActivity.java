@@ -5,10 +5,12 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.media.ThumbnailUtils;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -34,6 +36,7 @@ import java.io.InputStreamReader;
 public class ObjectDetectorActivity extends AppCompatActivity {
 
     private Button buttonPhoto;
+    private Button buttonSearch;
     private ImageView imageView;
     private TextView textView;
     private int imageSize = 224;
@@ -41,11 +44,15 @@ public class ObjectDetectorActivity extends AppCompatActivity {
     private String[] labels;
     private int count = 0;
 
-    private String[] languages = {"Italiano","Russo", "Tedesco", "Spagnolo", "Giapponese"};
+    private String[] languages = {"Inglese","Italiano","Russo", "Tedesco", "Spagnolo"};
     private AutoCompleteTextView autoComlete;
     private ArrayAdapter arrayAdapter;
 
     private String selectedLenguage = "Inglese";
+
+    private final Context context = this;
+    private boolean flagBtnSearch = false;
+    private String searchString = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,9 +63,13 @@ public class ObjectDetectorActivity extends AppCompatActivity {
         imageView = findViewById(R.id.imageView);
         textView = findViewById(R.id.text_view_object_classified);
 
+        buttonSearch = findViewById(R.id.search_button);
+
         autoComlete = findViewById(R.id.auto_complete_txt);
         arrayAdapter = new ArrayAdapter<String>(this, R.layout.list_language, languages);
         autoComlete.setAdapter(arrayAdapter);
+
+
 
 
 
@@ -85,6 +96,11 @@ public class ObjectDetectorActivity extends AppCompatActivity {
                System.out.println("hai scelto: " + selectedLenguage);
             }
         });
+        if(flagBtnSearch == false){
+            buttonSearch.setVisibility(View.GONE);
+        }
+
+        searchWikipedia();
 
     }
 
@@ -111,6 +127,16 @@ public class ObjectDetectorActivity extends AppCompatActivity {
                     case "Russo":
                         objectDetectorControl("object_list_ru.txt");
                         break;
+                    case "Francese":
+                        objectDetectorControl("object_list_fr.txt");
+                        break;
+                    case "Tedesco":
+                        objectDetectorControl("object_list_de.txt");
+                        break;
+                    case "Spagnolo":
+                        objectDetectorControl("object_list_es.txt");
+                        break;
+
                     default:
                         selectedLenguage = "object_list.txt";
                 }
@@ -158,6 +184,29 @@ public class ObjectDetectorActivity extends AppCompatActivity {
 
             textView.setText(labels[getMax(outputFeature0.getFloatArray())] +  " ");
 
+
+            switch (selectedLenguage){
+                case "Inglese":
+                    searchString = "http://en.wikipedia.org/wiki/" + textView.getText();
+                    break;
+                case "Italiano":
+                    searchString = "http://it.wikipedia.org/wiki/" + textView.getText();
+                    break;
+                case "Russo":
+                    searchString = "http://ru.wikipedia.org/wiki/" + textView.getText();
+                    break;
+                case "Francese":
+                    searchString = "http://fr.wikipedia.org/wiki/" + textView.getText();
+                    break;
+                case "Tedesco":
+                    searchString = "http://de.wikipedia.org/wiki/" + textView.getText();
+                    break;
+                case "Spagnolo":
+                    searchString = "http://es.wikipedia.org/wiki/" + textView.getText();
+                    break;
+
+            }
+
             // Releases model resources if no longer used.
             model.close();
         } catch (IOException e) {
@@ -186,10 +235,25 @@ public class ObjectDetectorActivity extends AppCompatActivity {
                 labels[count] = line;
                 count++;
                 line = bufferedReader.readLine();
+                flagBtnSearch = true;
+                buttonSearch.setVisibility(View.VISIBLE);
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public void searchWikipedia(){
+
+        buttonSearch.setOnClickListener(new View.OnClickListener(){
+            public void onClick(View view){
+                Intent intent = new Intent (Intent.ACTION_VIEW, Uri.parse(searchString));
+                startActivity(intent);
+
+            }
+        });
+
+
     }
 
 
