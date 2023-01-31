@@ -44,7 +44,7 @@ public class ObjectDetectorActivity extends AppCompatActivity {
     private String[] labels;
     private int count = 0;
 
-    private String[] languages = {"Inglese","Italiano","Russo", "Tedesco", "Spagnolo"};
+    private String[] languages;
     private AutoCompleteTextView autoComlete;
     private ArrayAdapter arrayAdapter;
 
@@ -65,13 +65,11 @@ public class ObjectDetectorActivity extends AppCompatActivity {
 
         buttonSearch = findViewById(R.id.search_button);
 
+        languages =  getResources().getStringArray(R.array.language);
+
         autoComlete = findViewById(R.id.auto_complete_txt);
         arrayAdapter = new ArrayAdapter<String>(this, R.layout.list_language, languages);
         autoComlete.setAdapter(arrayAdapter);
-
-
-
-
 
 
         buttonPhoto.setOnClickListener(new View.OnClickListener() {
@@ -106,8 +104,6 @@ public class ObjectDetectorActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-
-
 
         if(resultCode == RESULT_OK){
             if(requestCode == 3){
@@ -183,7 +179,6 @@ public class ObjectDetectorActivity extends AppCompatActivity {
             TensorBuffer outputFeature0 = outputs.getOutputFeature0AsTensorBuffer();
 
             textView.setText(labels[getMax(outputFeature0.getFloatArray())] +  " ");
-
 
             switch (selectedLenguage){
                 case "Inglese":
