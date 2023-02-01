@@ -3,6 +3,7 @@ package com.example.food_object_detector;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 import android.Manifest;
 import android.content.Context;
@@ -14,8 +15,8 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
@@ -32,6 +33,7 @@ import org.tensorflow.lite.support.tensorbuffer.TensorBuffer;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Locale;
 
 public class ObjectDetectorActivity extends AppCompatActivity {
 
@@ -39,6 +41,7 @@ public class ObjectDetectorActivity extends AppCompatActivity {
     private Button buttonSearch;
     private ImageView imageView;
     private TextView textView;
+    private TextView recognizedObject;
     private int imageSize = 224;
     private Bitmap image;
     private String[] labels;
@@ -61,7 +64,8 @@ public class ObjectDetectorActivity extends AppCompatActivity {
 
         buttonPhoto = findViewById(R.id.button_take_object_photo);
         imageView = findViewById(R.id.imageView);
-        textView = findViewById(R.id.text_view_object_classified);
+        textView = findViewById(R.id.text_view_classified);
+        recognizedObject = findViewById(R.id.result);
 
         buttonSearch = findViewById(R.id.search_button);
 
@@ -71,6 +75,13 @@ public class ObjectDetectorActivity extends AppCompatActivity {
         arrayAdapter = new ArrayAdapter<String>(this, R.layout.list_language, languages);
         autoComlete.setAdapter(arrayAdapter);
 
+        /*
+        android:layout_marginEnd="24dp"
+
+
+        app:layout_constraintEnd_toStartOf="@+id/button_take_object_photo"
+
+         */
 
         buttonPhoto.setOnClickListener(new View.OnClickListener() {
             @RequiresApi(api = Build.VERSION_CODES.M)
@@ -79,6 +90,7 @@ public class ObjectDetectorActivity extends AppCompatActivity {
                 if(checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
                     Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                     startActivityForResult(cameraIntent, 3);
+
 
                 }else{
                     requestPermissions(new String[]{Manifest.permission.CAMERA}, 100);
@@ -91,9 +103,9 @@ public class ObjectDetectorActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 selectedLenguage = autoComlete.getText().toString();
-               System.out.println("hai scelto: " + selectedLenguage);
             }
         });
+
         if(flagBtnSearch == false){
             buttonSearch.setVisibility(View.GONE);
         }
@@ -111,7 +123,6 @@ public class ObjectDetectorActivity extends AppCompatActivity {
                 int dimension = Math.min(image.getWidth(), image.getHeight());
                 image = ThumbnailUtils.extractThumbnail(image, dimension, dimension);
                 imageView.setImageBitmap(image);
-
                 labels = new String[1001];
                 switch (selectedLenguage){
                     case "Inglese":
@@ -132,35 +143,21 @@ public class ObjectDetectorActivity extends AppCompatActivity {
                     case "Spagnolo":
                         objectDetectorControl("object_list_es.txt");
                         break;
-
                     default:
-                        selectedLenguage = "object_list.txt";
+                        objectDetectorControl("object_list.txt");
                 }
                 image = Bitmap.createScaledBitmap(image, imageSize, imageSize, false);
+
+                ConstraintLayout.LayoutParams layoutButtonPhoto = (ConstraintLayout.LayoutParams) buttonPhoto.getLayoutParams();
+                layoutButtonPhoto.setMarginEnd(24);
+                buttonPhoto.setLayoutParams(layoutButtonPhoto);
+
                 classifyImage();
 
             }
 
-            /* Funzinoe per integrare l'assunzione di un immagine dalla galleria
-            else{
-                Uri dat = data.getData();
-                Biitmap image = null;
-                try {
-                    Bitmap image = MediaStore.Images.Media.getBitmap(this.getContentResolver(), dat);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                imageView.setImageBitmap(image);
-
-                image = Bitmap.createScaledBitmap(image, imageSize, imageSize, false);
-                classifyImage(image);
-            }
-
-             */
-
 
         }
-
 
         super.onActivityResult(requestCode, resultCode, data);
 
@@ -178,26 +175,27 @@ public class ObjectDetectorActivity extends AppCompatActivity {
             DetectObject.Outputs outputs = model.process(inputFeature0);
             TensorBuffer outputFeature0 = outputs.getOutputFeature0AsTensorBuffer();
 
-            textView.setText(labels[getMax(outputFeature0.getFloatArray())] +  " ");
+            textView.setVisibility(View.VISIBLE);
+            recognizedObject.setText(labels[getMax(outputFeature0.getFloatArray())] +  " ");
 
             switch (selectedLenguage){
                 case "Inglese":
-                    searchString = "http://en.wikipedia.org/wiki/" + textView.getText();
+                    searchString = "http://en.wikipedia.org/wiki/" + recognizedObject.getText();
                     break;
                 case "Italiano":
-                    searchString = "http://it.wikipedia.org/wiki/" + textView.getText();
+                    searchString = "http://it.wikipedia.org/wiki/" + recognizedObject.getText();
                     break;
                 case "Russo":
-                    searchString = "http://ru.wikipedia.org/wiki/" + textView.getText();
+                    searchString = "http://ru.wikipedia.org/wiki/" + recognizedObject.getText();
                     break;
                 case "Francese":
-                    searchString = "http://fr.wikipedia.org/wiki/" + textView.getText();
+                    searchString = "http://fr.wikipedia.org/wiki/" + recognizedObject.getText();
                     break;
                 case "Tedesco":
-                    searchString = "http://de.wikipedia.org/wiki/" + textView.getText();
+                    searchString = "http://de.wikipedia.org/wiki/" + recognizedObject.getText();
                     break;
                 case "Spagnolo":
-                    searchString = "http://es.wikipedia.org/wiki/" + textView.getText();
+                    searchString = "http://es.wikipedia.org/wiki/" + recognizedObject.getText();
                     break;
 
             }

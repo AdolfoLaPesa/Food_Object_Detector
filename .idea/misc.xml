@@ -3,8 +3,6 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
-        <entry key="..\:/Users/Camillo/Documents/GitHub/Food_Object_Detector/app/src/main/res/layout/activity_main.xml" value="0.1524822695035461" />
-        <entry key="..\:/Users/Camillo/Documents/GitHub/Food_Object_Detector/app/src/main/res/layout/activity_object_detector.xml" value="0.1524822695035461" />
         <entry key="..\:/dev/Food_Object_Detector/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.331" />
         <entry key="..\:/dev/Food_Object_Detector/app/src/main/res/drawable/custom_button.xml" value="0.331" />
         <entry key="..\:/dev/Food_Object_Detector/app/src/main/res/drawable/custom_image.xml" value="0.331" />
@@ -15,6 +13,9 @@
         <entry key="..\:/dev/Food_Object_Detector/app/src/main/res/layout/activity_main.xml" value="0.22" />
         <entry key="..\:/dev/Food_Object_Detector/app/src/main/res/layout/activity_object_detector.xml" value="0.33" />
         <entry key="..\:/dev/Food_Object_Detector/app/src/main/res/layout/list_language.xml" value="0.2890625" />
+        <entry key="..\:/dev/Food_Object_Detector/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.3285" />
+        <entry key="..\:/dev/Food_Object_Detector/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" value="0.3205" />
+        <entry key="..\:/dev/Food_Object_Detector/app/src/main/res/mipmap-anydpi-v26/ic_new_launcher.xml" value="0.3205" />
       </map>
     </option>
   </component>

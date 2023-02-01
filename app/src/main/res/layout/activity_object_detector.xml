@@ -34,11 +34,12 @@
         android:layout_marginTop="1dp">
 
         <TextView
-            android:id="@+id/text_view_object_classified"
+            android:id="@+id/text_view_classified"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:gravity="center"
+            android:visibility="gone"
             android:text="Classified as:"
             android:textSize="20sp"
             android:textStyle="bold"
@@ -54,14 +55,13 @@
             android:layout_marginTop="4dp"
             android:gravity="center"
             android:text=""
-            android:textColor="#C30000"
             android:textSize="27sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="@+id/text_view_object_classified"
+            app:layout_constraintEnd_toEndOf="@+id/text_view_classified"
             app:layout_constraintHorizontal_bias="0.495"
-            app:layout_constraintStart_toStartOf="@+id/text_view_object_classified"
-            app:layout_constraintTop_toBottomOf="@+id/text_view_object_classified"
+            app:layout_constraintStart_toStartOf="@+id/text_view_classified"
+            app:layout_constraintTop_toBottomOf="@+id/text_view_classified"
             app:layout_constraintVertical_bias="0.0" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -120,7 +120,6 @@
             android:textSize="13sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/button_take_object_photo"
             app:layout_constraintHorizontal_bias="0.148"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -129,7 +128,7 @@
             android:id="@+id/button_take_object_photo"
             android:layout_width="148dp"
             android:layout_height="69dp"
-            android:layout_marginEnd="24dp"
+            android:layout_marginEnd="132dp"
             android:background="@drawable/custom_button"
             android:drawableLeft="@drawable/ic_photo"
             android:text="Take   Photo"
