@@ -67,6 +67,7 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintLayoutDropdown"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense.ExposedDropdownMenu"
         android:layout_width="match_parent"
         android:layout_height="94dp"
         android:layout_below="@+id/constraintLayoutTextView"
@@ -80,7 +81,6 @@
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
             android:hint="Language"
-            android:textColorHint="@color/material_dynamic_neutral40"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

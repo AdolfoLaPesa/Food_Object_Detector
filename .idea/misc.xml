@@ -3,6 +3,8 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/Camillo/Documents/GitHub/Food_Object_Detector/app/src/main/res/layout/activity_main.xml" value="0.1524822695035461" />
+        <entry key="..\:/Users/Camillo/Documents/GitHub/Food_Object_Detector/app/src/main/res/layout/activity_object_detector.xml" value="0.1524822695035461" />
         <entry key="..\:/dev/Food_Object_Detector/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.331" />
         <entry key="..\:/dev/Food_Object_Detector/app/src/main/res/drawable/custom_button.xml" value="0.331" />
         <entry key="..\:/dev/Food_Object_Detector/app/src/main/res/drawable/custom_image.xml" value="0.331" />
