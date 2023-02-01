@@ -2,7 +2,7 @@
     <string name="app_name">Recognizelt</string>
 
     <string-array name="language">
-        <item>English</item>
+        <item>Inglese</item>
         <item>Italiano</item>
         <item>Russo</item>
         <item>Tedesco</item>

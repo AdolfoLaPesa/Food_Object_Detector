@@ -90,8 +90,6 @@ public class ObjectDetectorActivity extends AppCompatActivity {
                 if(checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
                     Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                     startActivityForResult(cameraIntent, 3);
-
-
                 }else{
                     requestPermissions(new String[]{Manifest.permission.CAMERA}, 100);
                 }
